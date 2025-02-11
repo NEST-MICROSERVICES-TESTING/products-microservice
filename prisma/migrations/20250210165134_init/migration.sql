@@ -1,0 +1,8 @@
+-- CreateTable
+CREATE TABLE "Product" (
+    "nIdProduct" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "sProduct" TEXT NOT NULL,
+    "nPrice" REAL NOT NULL,
+    "dCreateAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dUpdateAt" DATETIME NOT NULL
+);
