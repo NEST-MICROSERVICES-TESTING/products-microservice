@@ -6,7 +6,7 @@ export class PaginationDto {
     @IsPositive()
     @IsOptional()
     @Type(() => Number)
-    nPage?   : number = 1;
+    nPage   : number = 1;
 
     @IsPositive()
     @IsOptional()

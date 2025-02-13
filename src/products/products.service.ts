@@ -1,9 +1,10 @@
-import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
 import { PaginationDto } from 'src/common';
 import { ErrorDataDto } from 'src/common/dto/errorData.dto';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductsService extends PrismaClient implements OnModuleInit {
@@ -20,12 +21,14 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     }
 
     async findAll( paginationDto: PaginationDto ) {
+
         const { nPage, nLimit } = paginationDto;
+        
         const nTotalPages = await this.product.count({ where: { bActivo: true }});
         const nLastPage = Math.ceil( nTotalPages / nLimit );
         
         let  errorData : ErrorDataDto | null = null;
-        if ( nPage! > nLastPage ){
+        if ( nPage > nLastPage ){
             errorData = {
                 statusCode  : 400
                 ,sMessage   : 'El número de página solicitado excede el límite permitido.'
@@ -34,7 +37,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
 
         return {
             data: await this.product.findMany({
-                skip    : ( nPage! - 1 ) * nLimit
+                skip    : ( nPage - 1 ) * nLimit
                 ,take   : nLimit
                 ,where  : { bActivo: true }
             })
@@ -54,7 +57,10 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
         })
 
         if ( !product ) {
-            throw new NotFoundException(`Product with id #${ id } not found`);
+            throw new RpcException({
+                status: HttpStatus.BAD_REQUEST
+                ,message: `Product with id #${ id } not found`
+            });
         }
 
         return product;
