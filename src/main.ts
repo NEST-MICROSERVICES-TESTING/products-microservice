@@ -14,7 +14,7 @@ async function bootstrap() {
                 port: envs.port
             }
         }
-    );    
+    );
 
     app.useGlobalPipes(
         new ValidationPipe({

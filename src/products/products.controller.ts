@@ -38,8 +38,13 @@ export class ProductsController {
     }
 
     // @Delete(':id')
-    @MessagePattern({ cmd: 'delete_product'})
+    @MessagePattern({ cmd: 'delete_product' })
     remove(@Payload('nIdProduct') nIdProduct: string) {
         return this.productsService.remove(+nIdProduct);
+    }
+
+    @MessagePattern({ cmd: 'validate_products' })
+    validateProducts( @Payload() ids: number[] ) {
+        return this.productsService.validateProducts(ids);
     }
 }
